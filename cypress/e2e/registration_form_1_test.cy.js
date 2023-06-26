@@ -16,12 +16,17 @@ Assignment 2:
  5. Add comment to the first test containing today’s date
  */
 
-describe('This is first test suite', () => {
+        //Todays date is 12.06.2023
+describe('This is first test suite, Üllar Kappak', () => {
     it('User can submit data only when valid mandatory values are added', () => {
+        cy.get('[data-testid="phoneNumberTestId"]').type('555666777')
+        cy.get('[data-testid="phoneNumberTestId"]').type('555666777')
+        cy.get('#firstName').type('Mickey')
+        cy.get('#lastName').type('Mouse')
+
+        cy.get('input[name="password"]').type('Parool2023')
+        cy.get('[name="confirm"]').type('Parool2023')
         cy.get('#username').type('Something')
-        cy.get('[data-testid="phoneNumberTestId"]').type('10203040')
-        cy.get('input[name="password"]').type('MyPass')
-        cy.get('[name="confirm"]').type('MyPass')
 
         //in order to activate submit button, user has to click somewhere outside the input field
         cy.get('h2').contains('Password').click()
@@ -97,13 +102,58 @@ describe('This is first test suite', () => {
         // Add test, similar to previous one with phone number field not filled in
         // All other fields should be entered correctly
         // Assert that submit button is not enabled and that successful message is not visible
+        cy.get('[data-testid="phoneNumberTestId"]').type(' ')
+        cy.get('#username').type('Yllar')
+        cy.get('input[name="password"]').type('MyPass')
+        cy.get('[name="confirm"]').type('MyPass')
+
+        // Scroll back to username input field
+        cy.get('#username').scrollIntoView()
+        cy.get('#username').clear().type('  ')
+        cy.get('h2').contains('Password').click()
+
+        // Asserting that Submit button is disabled
+        cy.get('.submit_button').should('be.disabled')
+
+        // Assert that success message is not visible
+        cy.get('#success_message').should('not.be.visible')
+
+        // Assert that username has tooltip with error message
+        cy.get('input[name="username"]').should('have.attr', 'title').should('contain', 'Input field')
+
+        // There are 2 options how to check error message visibility: using CSS or simply be.visible
+        // none = not visible; block = visible
+        cy.get('#input_error_message').should('be.visible')
+        cy.get('#input_error_message').should('have.css', 'display', 'block')
     })
 
     it('User cannot submit data when password and/or confirmation password is absent', () => {
         // Add test, similar to previous one with password field not filled in
         // All other fields should be entered correctly
         // Assert that submit button is not enabled and that successful message is not visible
+        cy.get('[data-testid="phoneNumberTestId"]').type('123')
+        cy.get('#username').type('Yllar')
+
+
+        // Scroll back to username input field
+        cy.get('#username').scrollIntoView()
+        cy.get('#username').clear().type('Belfy')
+        cy.get('h2').contains('Password').click()
+
+        // Asserting that Submit button is disabled
+        cy.get('.submit_button').should('be.disabled')
+
+        // Assert that success message is not visible
+        cy.get('#success_message').should('not.be.visible')
+
+        // There are 2 options how to check error message visibility: using CSS or simply be.visible
+        // none = not visible; block = visible
+        cy.get('#input_error_message').should('have.css', 'display', 'none')
     })
+
+
+
+
 
     it('User cannot add letters to phone number', () => {
         // Next verification is given as example
@@ -113,5 +163,27 @@ describe('This is first test suite', () => {
         // Add steps, when all fields are correctly filled in, except phone number
         // Try typing letters to phone number field
         // Assert that submit button is not enabled and that successful message is not visible
+
+        cy.get('#username').type('Belfy')
+        cy.get('#firstName').type('Mickey')
+        cy.get('#lastName').type('Mouse')
+
+        cy.get('[data-testid="phoneNumberTestId"]').should('have.attr', 'type', 'number').type('abc')
+
+        cy.get('input[name="password"]').type('MyPass')
+        cy.get('[name="confirm"]').type('MyPass')
+        cy.get('h2').contains('Password').click()
+
+
+        // Asserting that Submit button is disabled
+        cy.get('.submit_button').should('be.disabled')
+
+        // Assert that success message is not visible
+        cy.get('#success_message').should('not.be.visible')
+
+
+        // There are 2 options how to check error message visibility: using CSS or simply be.visible
+        // none = not visible; block = visible
+        cy.get('#input_error_message').should('have.css', 'display', 'none')
     })
 })
